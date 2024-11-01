@@ -84,13 +84,16 @@ textarea {
     <script>
 // script.js
 
+// Global array to hold posts
+let posts = [];
+
 // Check if user is logged in and display the post creation and name change sections if they are
 document.addEventListener('DOMContentLoaded', () => {
     const user = localStorage.getItem('user');
     if (user) {
         showUserSections();
     }
-    displayPosts(); // Display posts when the page loads
+    displayPosts(); // Display existing posts on page load
 });
 
 // Login functionality
@@ -99,7 +102,6 @@ document.getElementById('loginButton').addEventListener('click', () => {
     if (username) {
         localStorage.setItem('user', username);
         showUserSections();
-        displayPosts(); // Show posts after logging in
     } else {
         alert('Please enter your name to log in.');
     }
@@ -129,49 +131,32 @@ document.getElementById('postButton').addEventListener('click', () => {
     const content = document.getElementById('postContent').value;
     const user = localStorage.getItem('user');
     if (content && user) {
-        createPost(content, user);
+        createPost(content, user); // Call the function to create a post
         document.getElementById('postContent').value = ''; // Clear input field
     } else {
-        alert('Please enter some content for the post.');
+        alert('Please enter your content and ensure you are logged in.');
     }
 });
 
 // Function to create a new post
 function createPost(content, username) {
-    const posts = getPosts();
     const newPost = {
         id: Date.now(), // Unique ID for each post
         content,
         username, // Store the creator's name
-        date: new Date().toLocaleString()
+        date: new Date().toLocaleString() // Format the date
     };
-    posts.push(newPost);
-    localStorage.setItem('posts', JSON.stringify(posts));
-    displayPosts();
-}
-
-// Function to retrieve posts from localStorage
-function getPosts() {
-    const posts = localStorage.getItem('posts');
-    return posts ? JSON.parse(posts) : [];
-}
-
-// Function to delete a post by ID
-function deletePost(id) {
-    let posts = getPosts();
-    posts = posts.filter(post => post.id !== id); // Filter out the post with the matching ID
-    localStorage.setItem('posts', JSON.stringify(posts));
-    displayPosts();
+    posts.push(newPost); // Add the new post to the posts array
+    displayPosts(); // Refresh the posts display
 }
 
 // Function to display all posts in the feed
 function displayPosts() {
-    const posts = getPosts();
     const postsContainer = document.getElementById('posts');
     postsContainer.innerHTML = ''; // Clear current content
 
     if (posts.length === 0) {
-        postsContainer.innerHTML = '<p>No posts available.</p>'; // Show message if no posts
+        postsContainer.innerHTML = '<p>No posts available. Be the first to post!</p>'; // Message when no posts exist
     } else {
         posts.forEach((post) => {
             const postElement = document.createElement('div');
@@ -182,10 +167,19 @@ function displayPosts() {
                 <span class="post-date">${post.date}</span>
                 <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
             `;
-            postsContainer.appendChild(postElement);
+            postsContainer.appendChild(postElement); // Append the post element to the container
         });
     }
 }
+
+// Function to delete a post by ID
+function deletePost(id) {
+    posts = posts.filter(post => post.id !== id); // Filter out the post with the matching ID
+    displayPosts(); // Refresh the posts display
+}
+
+// Note: The getPosts function is no longer needed since we use the global posts array
+
 
         
     </script>
