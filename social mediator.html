@@ -132,7 +132,7 @@ header {
     </section>
 
     <script>
-        // script.js
+// script.js
 
 // Check if user is logged in and display the post creation and name change sections if they are
 document.addEventListener('DOMContentLoaded', () => {
@@ -167,6 +167,7 @@ document.getElementById('changeNameButton').addEventListener('click', () => {
     if (newName) {
         localStorage.setItem('user', newName);
         alert('Name changed successfully!');
+        displayPosts(); // Update the feed display with the new name
     } else {
         alert('Please enter a new name.');
     }
